@@ -1,0 +1,61 @@
+{
+  "name": "timer-easy-send",
+  "productName": "Timer Easy Send",
+  "version": "1.0.0",
+  "description": "Timer toujours à l'écran, relié à la to-do d'Easy Desk (Easy Send)",
+  "author": "Easy Send",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "demo": "electron . --demo",
+    "installateur": "electron-builder --win nsis",
+    "installateur-mac": "electron-builder --mac --publish never"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@supabase/supabase-js": "2.118.0"
+  },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "app.easysend.timer",
+    "productName": "Timer Easy Send",
+    "directories": {
+      "output": "installateur"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "app/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "app/icone.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Timer Easy Send",
+      "runAfterFinish": true
+    },
+    "mac": {
+      "target": [{ "target": "dmg", "arch": ["universal"] }],
+      "icon": "app/icone.png",
+      "category": "public.app-category.productivity",
+      "identity": "-",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "title": "Timer Easy Send",
+      "artifactName": "Timer Easy Send - Mac.dmg"
+    }
+  }
+}

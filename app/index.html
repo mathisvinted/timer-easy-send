@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src https://pgutbxtfsklazotlfcii.supabase.co">
+
+<title>Timer Easy Send</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="carte" class="carte">
+
+  <section id="vue-chargement" class="vue">
+    <div class="barre">
+      <span class="marque">Timer<span class="point">.</span></span>
+    </div>
+    <p class="calme">Chargement…</p>
+  </section>
+
+  <section id="vue-connexion" class="vue" hidden>
+    <div class="barre">
+      <span class="marque">Timer<span class="point">.</span></span>
+      <button class="icone sans-glisser" data-action="masquer" title="Réduire" aria-label="Réduire">
+        <svg viewBox="0 0 16 16"><path d="M3.5 8h9"/></svg>
+      </button>
+    </div>
+    <p class="intro">Connecte-toi avec ton compte <em>Easy Send</em> : le timer suit ta to-do d'Easy Desk.</p>
+    <form id="form-connexion" class="formulaire sans-glisser">
+      <input id="email" type="email" placeholder="E-mail" autocomplete="username" required>
+      <input id="mdp" type="password" placeholder="Mot de passe" autocomplete="current-password" required>
+      <button type="submit" class="plein">Se connecter</button>
+      <p class="erreur" id="erreur-connexion" role="alert"></p>
+    </form>
+  </section>
+
+  <section id="vue-timer" class="vue" hidden>
+    <div class="anneau" aria-hidden="true">
+      <svg viewBox="0 0 100 100"><circle class="piste" cx="50" cy="50" r="44"/><circle class="arc" id="arc" cx="50" cy="50" r="44"/></svg>
+    </div>
+    <div class="barre">
+      <span class="etiquette"><span class="pastille" id="pastille"></span><span id="etiquette"></span></span>
+      <span class="boutons sans-glisser">
+        <button class="icone" data-action="planning" title="Planning de la semaine, en grand" aria-label="Ouvrir le planning de la semaine">
+          <svg viewBox="0 0 16 16"><rect x="2.5" y="3.5" width="11" height="10" rx="2"/><path d="M2.5 6.5h11M5.5 2v3M10.5 2v3"/></svg>
+        </button>
+        <button class="icone" data-action="ouvrir" id="btn-ouvrir" title="Détails et liste" aria-label="Détails et liste" aria-expanded="false">
+          <svg viewBox="0 0 16 16"><path d="M4 6.5l4 4 4-4"/></svg>
+        </button>
+        <button class="icone" data-action="masquer" title="Réduire" aria-label="Réduire">
+          <svg viewBox="0 0 16 16"><path d="M3.5 8h9"/></svg>
+        </button>
+      </span>
+    </div>
+
+    <h1 class="titre" id="titre"></h1>
+
+    <div class="ligne-temps">
+      <div class="temps">
+        <span class="chiffres" id="temps"></span>
+        <span class="sous" id="sous"></span>
+      </div>
+      <button class="action sans-glisser" id="btn-action"></button>
+    </div>
+    <div class="jauge" id="jauge"><span id="jauge-rempli"></span></div>
+
+    <div class="idees sans-glisser" id="idees" hidden>
+      <div class="idees-tete">
+        <span id="idees-titre"></span>
+        <button class="lien" id="idees-fermer">Plus tard</button>
+      </div>
+      <div id="idees-liste"></div>
+    </div>
+
+    <div class="bandeau sans-glisser" id="bandeau" hidden>
+      <span id="bandeau-texte"></span>
+      <button class="lien" id="bandeau-bouton"></button>
+    </div>
+
+    <div class="details sans-glisser" id="details" hidden>
+      <div class="meta" id="meta"></div>
+      <div class="actions-tache" id="actions-tache">
+        <button class="pilule-action" id="btn-lendemain" title="Même heure, le jour d'après">
+          Décaler au lendemain<svg viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5"/></svg>
+        </button>
+      </div>
+      <div class="description" id="description"></div>
+      <div id="liste"></div>
+      <div class="pied">
+        <span class="choix" role="group" aria-label="Tâches affichées">
+          <button data-filtre="moi" id="filtre-moi">Mes tâches</button>
+          <button data-filtre="equipe" id="filtre-equipe">Toute l'équipe</button>
+        </span>
+        <span class="reseau" id="reseau"></span>
+      </div>
+      <div class="pied pied-bas">
+        <span class="calme" id="qui"></span>
+        <button class="lien" data-action="deconnexion">Se déconnecter</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="poignee-taille" id="poignee-taille" title="Glisser pour agrandir ou rapetisser · double-clic : taille normale"
+       aria-label="Changer la taille du timer">
+    <svg viewBox="0 0 12 12"><path d="M11 4L4 11M11 8L8 11"/></svg>
+  </div>
+
+</main>
+<script src="../node_modules/@supabase/supabase-js/dist/umd/supabase.js"></script>
+<script src="commun.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

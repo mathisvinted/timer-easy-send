@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src https://pgutbxtfsklazotlfcii.supabase.co">
+<title>Planning</title>
+<link rel="stylesheet" href="planning.css">
+</head>
+<body>
+
+<header class="entete">
+  <div class="titre-bloc">
+    <span class="marque">Planning<span class="point">.</span></span>
+    <span class="semaine" id="semaine"></span>
+  </div>
+  <div class="outils">
+    <button class="pilule pleine" data-action="nouvelle" title="Ou clique sur une case vide de la semaine">
+      <svg viewBox="0 0 16 16"><path d="M8 3.5v9M3.5 8h9"/></svg>Nouvelle tâche
+    </button>
+    <div class="nav">
+      <button class="rond" data-action="precedente" title="Semaine précédente" aria-label="Semaine précédente">
+        <svg viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5"/></svg>
+      </button>
+      <button class="pilule" data-action="aujourdhui">Aujourd'hui</button>
+      <button class="rond" data-action="suivante" title="Semaine suivante" aria-label="Semaine suivante">
+        <svg viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5"/></svg>
+      </button>
+    </div>
+    <span class="choix" role="group" aria-label="Tâches affichées">
+      <button data-filtre="moi" id="filtre-moi">Mes tâches</button>
+      <button data-filtre="equipe" id="filtre-equipe">Toute l'équipe</button>
+    </span>
+    <span class="legende" aria-label="Couleurs des priorités">
+      <span><i class="prio" data-priorite="haute"></i>Haute</span>
+      <span><i class="prio" data-priorite="moyenne"></i>Moyenne</span>
+      <span><i class="prio" data-priorite="basse"></i>Basse</span>
+    </span>
+    <span class="reseau" id="reseau"></span>
+  </div>
+</header>
+
+<main class="corps">
+  <section class="calendrier">
+    <div class="tetes" id="tetes"></div>
+    <div class="journee" id="journee"></div>
+    <div class="defile" id="defile">
+      <div class="grille" id="grille"></div>
+    </div>
+  </section>
+  <aside class="cote" id="cote">
+    <h2>Sans date</h2>
+    <div class="pile" id="sans-date"></div>
+    <h2 id="titre-retard">En retard</h2>
+    <div class="pile" id="en-retard"></div>
+    <p class="aide">Clique sur une case vide pour ajouter une tâche. Glisse une tâche dans la semaine pour lui donner
+      un jour et une heure, tire le bas d'un créneau pour le rallonger, clique dessus pour la modifier.
+      Chaque changement peut être annulé.</p>
+  </aside>
+</main>
+
+<div class="voile" id="voile" hidden></div>
+<form class="panneau" id="panneau" hidden autocomplete="off">
+  <div class="panneau-tete">
+    <span class="etiquette" id="p-etiquette">Tâche</span>
+    <button type="button" class="rond" data-action="fermer" title="Fermer" aria-label="Fermer">
+      <svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+    </button>
+  </div>
+  <textarea id="p-titre" class="champ-titre" rows="2" required aria-label="Titre de la tâche" placeholder="Que faut-il faire ?"></textarea>
+  <div class="champ">
+    <span>Jour</span>
+    <div class="ligne">
+      <input type="date" id="p-date" aria-label="Jour">
+      <button type="button" class="lien" data-action="sans-date">Sans date</button>
+    </div>
+  </div>
+  <div class="deux">
+    <label class="champ"><span>Début</span><input type="time" id="p-debut" step="300"></label>
+    <label class="champ"><span>Fin</span><input type="time" id="p-fin" step="300"></label>
+  </div>
+  <label class="champ"><span>Pour</span><select id="p-pour"></select></label>
+  <div class="champ">
+    <span>Priorité</span>
+    <div class="choix large" id="p-priorite" role="group" aria-label="Priorité">
+      <button type="button" data-valeur="Basse">Basse</button>
+      <button type="button" data-valeur="Moyenne">Moyenne</button>
+      <button type="button" data-valeur="Haute">Haute</button>
+    </div>
+  </div>
+  <div class="champ">
+    <span>Statut</span>
+    <div class="choix large" id="p-statut" role="group" aria-label="Statut">
+      <button type="button" data-valeur="À faire">À faire</button>
+      <button type="button" data-valeur="En attente">En attente</button>
+      <button type="button" data-valeur="Terminé">Terminé</button>
+    </div>
+  </div>
+  <label class="champ"><span>Détails</span><textarea id="p-description" rows="7"></textarea></label>
+  <p class="erreur" id="p-erreur" role="alert"></p>
+  <div class="panneau-pied">
+    <span class="groupe" id="p-actions">
+      <button type="button" class="secondaire" data-action="lancer-timer" title="Lancer le timer sur cette tâche">
+        <svg viewBox="0 0 12 12"><path d="M3 1.8v8.4L10 6z"/></svg>Timer
+      </button>
+      <button type="button" class="secondaire" data-action="lendemain" title="Décaler cette tâche d'un jour, même heure">
+        Au lendemain<svg class="fleche" viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5"/></svg>
+      </button>
+    </span>
+    <button type="submit" class="plein" id="p-valider">Enregistrer</button>
+  </div>
+</form>
+
+<div class="toast" id="toast" hidden>
+  <span id="toast-texte"></span>
+  <button type="button" class="lien" id="toast-bouton"></button>
+</div>
+<div class="message" id="message" hidden></div>
+
+<script src="../node_modules/@supabase/supabase-js/dist/umd/supabase.js"></script>
+<script src="commun.js"></script>
+<script src="planning.js"></script>
+</body>
+</html>

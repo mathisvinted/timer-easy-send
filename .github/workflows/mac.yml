@@ -1,0 +1,58 @@
+# Fabrique l'installateur Mac (un .dmg pour tous les Mac, puces Apple et Intel) sur une machine Mac de GitHub,
+# car un installateur Mac ne se fabrique que sur un Mac. Le fichier est publié dans « Releases » (lien fixe).
+# Compte rendu lisible sans ouvrir GitHub (git fetch) : branche statut-mac, fichier statut.txt.
+name: Installateur Mac
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: mac
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  mac:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci 2>&1 | tee npm.log; exit ${PIPESTATUS[0]}
+      # Pas de certificat Apple : l'appli est signée « ad hoc », le Mac demandera une confirmation à la première ouverture.
+      - run: npx electron-builder --mac --publish never 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      - name: Publier le fichier dans Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete mac --yes --cleanup-tag || true
+          gh release create mac "installateur/Timer Easy Send - Mac.dmg" \
+            --title "Timer Easy Send pour Mac" \
+            --notes "Installateur Mac (puces Apple et Intel). À la première ouverture : Réglages Système › Confidentialité et sécurité › Ouvrir quand même."
+      - if: always()
+        name: Compte rendu
+        run: |
+          D="$GITHUB_WORKSPACE"
+          mkdir -p /tmp/statut && cd /tmp/statut
+          git init -q && git checkout -q -b statut-mac
+          {
+            echo "resultat: ${{ job.status }}"
+            echo "execution: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            ls -la "$D/installateur" 2>/dev/null
+            echo "--- npm ---"; tail -n 20 "$D/npm.log" 2>/dev/null
+            echo "--- electron-builder ---"; tail -n 80 "$D/build.log" 2>/dev/null
+          } > statut.txt
+          git add statut.txt
+          git -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com commit -q -m "Compte rendu de l'installateur Mac"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" statut-mac
