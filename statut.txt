@@ -1,0 +1,47 @@
+resultat: success
+execution: https://github.com/mathisvinted/timer-easy-send/actions/runs/40007939875
+total 459240
+drwxr-xr-x   8 runner  staff        256 Oct 23 19:01 .
+drwxr-xr-x  17 runner  staff        544 Oct 23 19:00 ..
+drwxr-xr-x   3 runner  staff         96 Oct 23 19:00 .icon-icns
+-rw-r--r--   1 runner  staff       1824 Oct 23 19:01 builder-debug.yml
+-rw-r--r--   1 runner  staff        347 Oct 23 19:01 latest-mac.yml
+drwxr-xr-x   3 runner  staff         96 Oct 23 19:00 mac-universal
+-rw-r--r--@  1 runner  staff  226100720 Oct 23 19:01 Timer Easy Send - Mac.dmg
+-rw-r--r--   1 runner  staff     236407 Oct 23 19:01 Timer Easy Send - Mac.dmg.blockmap
+--- npm ---
+npm warn deprecated rimraf@2.6.3: Rimraf versions prior to v4 are no longer supported
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated boolean@3.2.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+
+added 293 packages, and audited 294 packages in 2s
+
+49 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+--- electron-builder ---
+  • electron-builder  version=26.15.3 os=25.6.0
+  • loaded configuration  file=package.json ("build" field)
+  • executing @electron/rebuild  electronVersion=45.0.0 arch=x64 buildFromSource=false workspaceRoot=/Users/runner/work/timer-easy-send/timer-easy-send projectDir=./ appDir=./
+  • installing native dependencies  arch=x64
+  • completed installing native dependencies
+  • packaging       platform=darwin arch=x64 electron=45.0.0 appOutDir=installateur/mac-universal-x64-temp
+  • downloaded      label=electron progress=100%
+  • downloaded electron zip extracted successfully  output=/Users/runner/work/timer-easy-send/timer-easy-send/installateur/mac-universal-x64-temp
+  • searching for node modules  pm=npm searchDir=/Users/runner/work/timer-easy-send/timer-easy-send
+  • downloaded      label=icons-bundle.tar.gz progress=100%
+  • executing @electron/rebuild  electronVersion=45.0.0 arch=arm64 buildFromSource=false workspaceRoot=/Users/runner/work/timer-easy-send/timer-easy-send projectDir=./ appDir=./
+  • installing native dependencies  arch=arm64
+  • completed installing native dependencies
+  • packaging       platform=darwin arch=arm64 electron=45.0.0 appOutDir=installateur/mac-universal-arm64-temp
+  • downloaded      label=electron progress=100%
+  • downloaded electron zip extracted successfully  output=/Users/runner/work/timer-easy-send/timer-easy-send/installateur/mac-universal-arm64-temp
+  • searching for node modules  pm=npm searchDir=/Users/runner/work/timer-easy-send/timer-easy-send
+  • packaging       platform=darwin arch=universal electron=45.0.0 appOutDir=installateur/mac-universal
+  • signing         file=installateur/mac-universal/Timer Easy Send.app platform=darwin type=distribution identityName=- identityHash=none provisioningProfile=none
+  • skipped macOS notarization  reason=`notarize` options were unable to be generated
+  • building        target=DMG arch=universal file=installateur/Timer Easy Send - Mac.dmg
+  • downloaded      label=dmgbuild-bundle-arm64-75c8a6c.tar.gz progress=100%
+  • building block map  blockMapFile=installateur/Timer Easy Send - Mac.dmg.blockmap
