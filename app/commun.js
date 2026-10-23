@@ -111,6 +111,97 @@ function pourMoi(t) {
   return sansAccent(t.assignee) === sansAccent(moi);
 }
 
+// ---------- Quelle tâche afficher (timer du PC et page du téléphone) ----------
+// 1. une tâche à horaire d'aujourd'hui dont l'heure de début est passée (la dernière commencée) : compte à rebours
+//    jusqu'à l'heure de fin, puis dépassement ; sans heure de fin, temps écoulé depuis le début ;
+// 2. sinon la tâche lancée à la main (focus = { id, depuis }) : son temps prévu, ou le temps libre jusqu'à la suivante ;
+// 3. sinon rien (la prochaine tâche à horaire est donnée à part).
+// cachees : tâches qu'on vient de terminer et qu'on n'affiche plus. focusPerime : la tâche lancée a disparu.
+function calculerSituation(taches, maintenant, focus, cachees = new Set()) {
+  const liste = taches.filter(t => t.status !== 'Terminé' && !cachees.has(t.id) && pourMoi(t));
+  const aujourdhui = jourLocal(maintenant);
+  const horaires = liste
+    .filter(t => t.due_date === aujourdhui && aHeure(t.due_date, t.start_time))
+    .map(t => {
+      const debut = aHeure(t.due_date, t.start_time);
+      let fin = aHeure(t.due_date, t.end_time);
+      if (fin && fin <= debut) fin = null;
+      return { t, debut, fin };
+    })
+    .sort((a, b) => a.debut - b.debut);
+  // Une tâche dont le créneau est fini ne reste à l'écran que tant qu'aucune autre n'a commencé après elle
+  // (terminées comprises) : finir la tâche du moment ne ressort pas une vieille tâche oubliée.
+  const debutsPasses = taches
+    .filter(t => pourMoi(t) && t.due_date === aujourdhui)
+    .map(t => aHeure(t.due_date, t.start_time))
+    .filter(d => d && d <= maintenant);
+  const commencees = horaires.filter(h => h.debut <= maintenant
+    && ((h.fin && h.fin > maintenant) || !debutsPasses.some(d => d > h.debut)));
+  const auto = commencees[commencees.length - 1] || null;
+
+  let manuelle = null, focusPerime = false;
+  if (focus) {
+    const t = liste.find(x => x.id === focus.id);
+    if (t) manuelle = { t, depuis: new Date(focus.depuis) };
+    else if (!cachees.has(focus.id)) focusPerime = true;
+  }
+  // La prochaine tâche à horaire, sans compter celle qu'il a déjà lancée en avance.
+  const prochaine = horaires.find(h => h.debut > maintenant && (!manuelle || h.t.id !== manuelle.t.id)) || null;
+
+  let actuelle = null;
+  // Lancée à la main, elle reste à l'écran jusqu'à ce qu'une AUTRE tâche commence après (son propre créneau ne la coupe pas).
+  if (manuelle && (!auto || auto.debut < manuelle.depuis || auto.t.id === manuelle.t.id)) {
+    const { t, depuis } = manuelle;
+    const allouee = dureeAllouee(t);
+    if (allouee) {
+      // Elle a un temps prévu (début → fin) : on décompte ce temps à partir du lancement (21/10).
+      actuelle = { mode: 'compte', main: true, t, debut: depuis, fin: new Date(depuis.getTime() + allouee) };
+    } else if (prochaine) {
+      // Pas de durée prévue : on décompte le temps libre jusqu'à la tâche suivante.
+      actuelle = { mode: 'compte', main: true, avantSuite: true, t, debut: depuis, fin: prochaine.debut };
+    } else {
+      actuelle = { mode: 'chrono', main: true, t, depuis };
+    }
+  } else if (auto) {
+    actuelle = auto.fin
+      ? { mode: 'compte', t: auto.t, debut: auto.debut, fin: auto.fin }
+      : { mode: 'chrono', t: auto.t, depuis: auto.debut };
+  }
+  // Terminées aujourd'hui : de quoi revenir en arrière après un clic de trop.
+  const minuit = debutDuJour(maintenant);
+  const terminees = taches
+    .filter(t => t.status === 'Terminé' && pourMoi(t) && t.updated_at && new Date(t.updated_at) >= minuit)
+    .sort((a, b) => b.updated_at.localeCompare(a.updated_at));
+  return { liste, aujourdhui, horaires, actuelle, prochaine, terminees, focusPerime };
+}
+
+// Les tâches à proposer pour un temps libre : les plus importantes d'abord, puis les retards, celles du jour
+// sans horaire, celles sans date, et enfin celles des jours suivants ; pas celles en attente, ni celles dont
+// le temps prévu dépasse le temps libre, ni celles qui ont déjà leur créneau plus tard aujourd'hui.
+function idees(s, maintenant, libre) {
+  const rang = { haute: 0, moyenne: 1, basse: 2 };
+  const groupe = t => (!t.due_date ? 2 : t.due_date < s.aujourdhui ? 0 : t.due_date === s.aujourdhui ? 1 : 3);
+  return s.liste
+    .filter(t => t.status !== 'En attente' && (!s.prochaine || t.id !== s.prochaine.t.id))
+    .filter(t => !(t.due_date === s.aujourdhui && t.start_time && aHeure(t.due_date, t.start_time) > maintenant))
+    .filter(t => { const d = dureeAllouee(t); return !d || libre === null || d <= libre; })
+    .sort((a, b) => (rang[sansAccent(a.priority)] ?? 1) - (rang[sansAccent(b.priority)] ?? 1)
+      || groupe(a) - groupe(b) || (a.due_date || '9999').localeCompare(b.due_date || '9999'))
+    .slice(0, 3);
+}
+
+const minutesLisibles = ms => {
+  const m = Math.floor(ms / 60000);
+  return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${pad(m % 60)}`;
+};
+
+// Une tâche créée pour soi reste à soi (comme dans Easy Desk) ; pour l'équipe ou quelqu'un d'autre, toute l'équipe
+// la voit. Un membre d'Easy Send n'a pas de tâches en commun : les siennes sont toujours à lui.
+function proprietaire(assignee) {
+  const pourSoi = monId && moi && assignee && sansAccent(assignee) === sansAccent(moi);
+  return pourSoi || !estEquipe ? monId : null;
+}
+
 // ---------- Démo (pour vérifier l'affichage sans compte) ----------
 function tachesDemo() {
   const m = new Date();

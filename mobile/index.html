@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F1E17">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Timer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; manifest-src 'self'; connect-src https://pgutbxtfsklazotlfcii.supabase.co">
+<title>Timer Easy Send</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="icon" href="icone-192.png">
+<link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+
+<div class="vue centre" id="vue-chargement"><span class="marque grande">Timer<span class="point">.</span></span></div>
+
+<section class="vue" id="vue-connexion" hidden>
+  <div class="connexion">
+    <span class="marque grande">Timer<span class="point">.</span></span>
+    <p class="intro">Connecte-toi avec ton compte <em>Easy Send</em> : tu retrouves ta to-do d'Easy Desk.</p>
+    <form id="form-connexion" class="formulaire">
+      <input id="email" type="email" inputmode="email" placeholder="E-mail" autocomplete="username" required>
+      <input id="mdp" type="password" placeholder="Mot de passe" autocomplete="current-password" required>
+      <button type="submit" class="plein">Se connecter</button>
+      <p class="erreur" id="erreur-connexion" role="alert"></p>
+    </form>
+  </div>
+</section>
+
+<section class="vue" id="vue-appli" hidden>
+  <header class="entete">
+    <span class="marque">Timer<span class="point">.</span></span>
+    <span class="date" id="date-jour"></span>
+    <button class="rond" data-action="reglages" aria-label="Réglages">
+      <svg viewBox="0 0 20 20"><circle cx="4.5" cy="10" r="1.4"/><circle cx="10" cy="10" r="1.4"/><circle cx="15.5" cy="10" r="1.4"/></svg>
+    </button>
+  </header>
+
+  <main class="onglet" id="onglet-maintenant">
+    <article class="carte-timer" id="carte">
+      <div class="etiquette"><span class="pastille" id="pastille"></span><span id="etiquette"></span></div>
+      <h1 class="titre" id="titre"></h1>
+      <div class="anneau">
+        <svg viewBox="0 0 100 100" aria-hidden="true"><circle class="piste" cx="50" cy="50" r="44"/><circle class="arc" id="arc" cx="50" cy="50" r="44"/></svg>
+        <div class="temps"><span class="chiffres" id="temps"></span><span class="sous" id="sous"></span></div>
+      </div>
+      <div class="actions">
+        <button class="secondaire" id="btn-second"></button>
+        <button class="plein" id="btn-action"></button>
+      </div>
+    </article>
+
+    <section class="idees" id="idees" hidden>
+      <div class="idees-tete" id="idees-titre"></div>
+      <div id="idees-liste"></div>
+      <button class="lien" id="idees-fermer">Plus tard</button>
+    </section>
+
+    <div id="liste-jour"></div>
+  </main>
+
+  <main class="onglet" id="onglet-semaine" hidden>
+    <div class="nav-semaine">
+      <button class="rond" data-action="precedente" aria-label="Semaine précédente"><svg viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5"/></svg></button>
+      <button class="titre-semaine" data-action="aujourdhui" id="titre-semaine"></button>
+      <button class="rond" data-action="suivante" aria-label="Semaine suivante"><svg viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5"/></svg></button>
+    </div>
+    <div id="semaine"></div>
+  </main>
+
+  <nav class="barre-onglets">
+    <button data-onglet="maintenant" class="actif">
+      <svg viewBox="0 0 20 20"><circle cx="10" cy="10.5" r="6.5"/><path d="M10 6.8v3.9l2.4 1.6M8 2.5h4"/></svg>Maintenant
+    </button>
+    <button class="ajouter" data-action="nouvelle" aria-label="Ajouter une tâche">
+      <svg viewBox="0 0 20 20"><path d="M10 4v12M4 10h12"/></svg>
+    </button>
+    <button data-onglet="semaine">
+      <svg viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="13" rx="2.5"/><path d="M3 8h14M7 2.5v3M13 2.5v3"/></svg>Semaine
+    </button>
+  </nav>
+</section>
+
+<div class="voile" id="voile" hidden></div>
+
+<form class="feuille" id="feuille" hidden autocomplete="off">
+  <div class="poignee-feuille"></div>
+  <div class="feuille-tete">
+    <span class="etiquette" id="f-etiquette">Tâche</span>
+    <button type="button" class="rond" data-action="fermer" aria-label="Fermer"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+  </div>
+  <textarea id="f-titre" class="champ-titre" rows="2" required placeholder="Que faut-il faire ?" aria-label="Titre de la tâche"></textarea>
+  <div class="champ">
+    <span>Jour</span>
+    <div class="ligne"><input type="date" id="f-date" aria-label="Jour"><button type="button" class="lien" data-action="sans-date">Sans date</button></div>
+  </div>
+  <div class="deux">
+    <label class="champ"><span>Début</span><input type="time" id="f-debut" step="300"></label>
+    <label class="champ"><span>Fin</span><input type="time" id="f-fin" step="300"></label>
+  </div>
+  <label class="champ" id="f-pour-champ"><span>Pour</span><select id="f-pour"></select></label>
+  <div class="champ"><span>Priorité</span>
+    <div class="choix" id="f-priorite"><button type="button" data-valeur="Basse">Basse</button><button type="button" data-valeur="Moyenne">Moyenne</button><button type="button" data-valeur="Haute">Haute</button></div>
+  </div>
+  <div class="champ"><span>Statut</span>
+    <div class="choix" id="f-statut"><button type="button" data-valeur="À faire">À faire</button><button type="button" data-valeur="En attente">En attente</button><button type="button" data-valeur="Terminé">Terminé</button></div>
+  </div>
+  <label class="champ"><span>Détails</span><textarea id="f-description" rows="5"></textarea></label>
+  <p class="erreur" id="f-erreur" role="alert"></p>
+  <div class="feuille-pied">
+    <div class="groupe" id="f-actions">
+      <button type="button" class="secondaire" data-action="lancer-feuille">▶ Timer</button>
+      <button type="button" class="secondaire" data-action="lendemain-feuille">Au lendemain →</button>
+    </div>
+    <button type="submit" class="plein" id="f-valider">Enregistrer</button>
+  </div>
+</form>
+
+<div class="feuille" id="reglages" hidden>
+  <div class="poignee-feuille"></div>
+  <div class="feuille-tete"><span class="etiquette">Réglages</span>
+    <button type="button" class="rond" data-action="fermer" aria-label="Fermer"><svg viewBox="0 0 16 16"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+  </div>
+  <p class="calme" id="qui"></p>
+  <div class="champ" id="filtre-champ"><span>Tâches affichées</span>
+    <div class="choix"><button type="button" data-filtre="moi" id="filtre-moi">Mes tâches</button><button type="button" data-filtre="equipe" id="filtre-equipe">Toute l'équipe</button></div>
+  </div>
+  <p class="calme" id="reseau"></p>
+  <button type="button" class="secondaire large" data-action="deconnexion">Se déconnecter</button>
+</div>
+
+<div class="toast" id="toast" hidden><span id="toast-texte"></span><button type="button" class="lien" id="toast-bouton"></button></div>
+<div class="message" id="message" hidden></div>
+
+<script src="supabase.js"></script>
+<script src="commun.js"></script>
+<script src="mobile.js"></script>
+</body>
+</html>

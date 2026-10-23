@@ -1,0 +1,194 @@
+/* Timer Easy Send sur téléphone : DA « vert profond » du timer (couleurs reprises de app/style.css). */
+@font-face { font-family: "Inter V"; src: url("fonts/Inter-variable.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "Inter Display"; font-weight: 700; src: url("fonts/InterDisplay-Bold.ttf"); }
+@font-face { font-family: "Inter Display"; font-weight: 600; src: url("fonts/InterDisplay-SemiBold.ttf"); }
+@font-face { font-family: "Instrument Serif"; font-style: italic; src: url("fonts/instrument-serif-latin-400-italic.woff2"); }
+
+:root {
+  --fond: #0B130F;
+  --fond-haut: #173025;
+  --creme: #F2EFE8;
+  --gris: #8FA79A;
+  --vert: #A3DDBB;
+  --brique: #D27C66;
+  --ligne: rgba(242, 239, 232, 0.10);
+  --surface: rgba(242, 239, 232, 0.05);
+  --barre: 74px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
+html, body { min-height: 100%; }
+body {
+  background: linear-gradient(180deg, #12261D 0%, var(--fond) 45%) fixed, var(--fond);
+  color: var(--creme); font: 500 15px/1.4 "Inter V", system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+}
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+.vue { min-height: 100vh; min-height: 100dvh; }
+.centre { display: grid; place-items: center; }
+.marque { font: 700 19px "Inter Display", sans-serif; letter-spacing: -0.02em; }
+.marque.grande { font-size: 30px; }
+.point { color: var(--vert); }
+
+/* Connexion */
+.connexion { padding: calc(env(safe-area-inset-top) + 80px) 24px 40px; max-width: 460px; margin: 0 auto; }
+.intro { margin-top: 14px; color: var(--gris); }
+.intro em { font: italic 18px "Instrument Serif", serif; color: var(--vert); }
+.formulaire { display: grid; gap: 10px; margin-top: 24px; }
+.formulaire input, .champ input, .champ select, .champ textarea {
+  height: 48px; padding: 0 14px; border-radius: 14px; border: 1px solid var(--ligne);
+  background: var(--surface); color: var(--creme); font: inherit; font-size: 16px; outline: none; width: 100%;
+}
+.formulaire input:focus, .champ input:focus, .champ select:focus, .champ textarea:focus { border-color: var(--vert); }
+.plein {
+  height: 48px; padding: 0 22px; border-radius: 999px; background: var(--creme); color: var(--fond); font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.plein:active, .secondaire:active { transform: scale(0.97); }
+.secondaire {
+  height: 48px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--ligne); color: var(--vert);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 500;
+}
+.secondaire.large { width: 100%; margin-top: 18px; }
+.lien { color: var(--vert); font-weight: 600; font-size: 14px; }
+.erreur { min-height: 18px; font-size: 13px; color: var(--brique); }
+.calme { font: italic 17px/1.35 "Instrument Serif", serif; color: var(--gris); }
+
+/* En-tête et onglets */
+.entete {
+  position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: calc(env(safe-area-inset-top) + 10px) 18px 10px; background: rgba(11, 19, 15, 0.82);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--ligne);
+}
+.date { font: italic 18px "Instrument Serif", serif; color: var(--vert); flex: 1; }
+.rond { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--gris); }
+.rond:active { background: var(--surface); }
+.rond svg { width: 20px; height: 20px; }
+.rond svg circle { fill: currentColor; stroke: none; }
+.nav-semaine .rond svg, .feuille-tete .rond svg { width: 16px; height: 16px; }
+.onglet { padding: 16px 16px calc(var(--barre) + env(safe-area-inset-bottom) + 24px); max-width: 640px; margin: 0 auto; }
+.barre-onglets {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; align-items: center; justify-content: space-around;
+  height: calc(var(--barre) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(11, 19, 15, 0.9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--ligne);
+}
+.barre-onglets button { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11.5px; color: var(--gris); min-width: 84px; }
+.barre-onglets button svg { width: 24px; height: 24px; }
+.barre-onglets button.actif { color: var(--creme); }
+.barre-onglets .ajouter {
+  width: 56px; height: 56px; min-width: 0; border-radius: 50%; background: var(--creme); color: var(--fond);
+  justify-content: center; margin-top: -18px; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+}
+.barre-onglets .ajouter svg { width: 26px; height: 26px; stroke-width: 2.2; }
+
+/* La tâche du moment */
+.carte-timer {
+  border-radius: 26px; padding: 20px 20px 22px; border: 1px solid var(--ligne);
+  background: linear-gradient(160deg, var(--fond-haut), var(--fond)); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+}
+.etiquette {
+  display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--gris);
+}
+.pastille { width: 7px; height: 7px; border-radius: 50%; background: var(--gris); flex: none; }
+.pastille.en-cours { background: var(--vert); animation: pouls 2s ease-in-out infinite; }
+.pastille.depassee { background: var(--brique); animation: pouls 1.2s ease-in-out infinite; }
+@keyframes pouls { 50% { opacity: 0.3; } }
+.titre { margin-top: 10px; font: 600 21px/1.25 "Inter Display", sans-serif; letter-spacing: -0.01em; }
+.titre[data-priorite]::before {
+  content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 10px 2px 0; vertical-align: middle;
+  background: var(--vert);
+}
+.titre[data-priorite="haute"]::before { background: var(--brique); }
+.titre[data-priorite="basse"]::before { background: var(--gris); }
+.anneau { position: relative; width: min(62vw, 250px); aspect-ratio: 1; margin: 22px auto 6px; }
+.anneau svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.anneau circle { stroke-width: 6; }
+.anneau .piste { stroke: var(--ligne); }
+.anneau .arc { stroke: var(--vert); stroke-dasharray: 276.46; stroke-dashoffset: 276.46; transition: stroke-dashoffset 1s linear, stroke 0.4s; }
+.carte-timer[data-etat="depassee"] .arc { stroke: var(--brique); }
+.temps { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.chiffres { font: 700 clamp(34px, 11vw, 52px)/1 "Inter Display", sans-serif; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+.sous { font: italic 18px "Instrument Serif", serif; color: var(--vert); text-align: center; padding: 0 12px; }
+.chiffres.depassee, .sous.depassee { color: var(--brique); }
+.actions { display: flex; gap: 10px; margin-top: 16px; }
+.actions > * { flex: 1; }
+
+/* Temps libre */
+.idees { margin-top: 16px; padding: 14px 16px 10px; border-radius: 20px; background: var(--surface); border: 1px solid var(--ligne); }
+.idees-tete { font-size: 14px; color: var(--creme); margin-bottom: 4px; }
+.idees .lien { display: block; margin: 8px 0 4px auto; }
+
+/* Listes de tâches */
+.section { margin-top: 24px; }
+.section h2 { font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris); margin-bottom: 4px; }
+.section h2 .aujourdhui { color: var(--vert); }
+.tache { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 0; border-bottom: 1px solid var(--ligne); }
+.tache:last-child { border-bottom: 0; }
+.tache .quand { width: 48px; flex: none; color: var(--gris); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.tache .nom { flex: 1; min-width: 0; line-height: 1.35; overflow-wrap: anywhere; }
+.tache .note { font-size: 12px; color: var(--brique); flex: none; }
+.tache .note.calme-note { color: var(--gris); }
+.tache.faite .nom { color: var(--gris); text-decoration: line-through; text-decoration-color: var(--ligne); }
+.prio { width: 9px; height: 9px; border-radius: 50%; flex: none; background: var(--vert); }
+[data-priorite="haute"] > .prio { background: var(--brique); }
+[data-priorite="basse"] > .prio { background: var(--gris); }
+.btn-ligne {
+  flex: none; height: 38px; min-width: 38px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center;
+  justify-content: center; gap: 5px; border: 1px solid var(--ligne); color: var(--vert); font-size: 13px; font-weight: 500;
+}
+.btn-ligne svg { width: 13px; height: 13px; }
+.btn-ligne.lecture svg { fill: currentColor; stroke: none; }
+.vide { font: italic 16px "Instrument Serif", serif; color: var(--gris); padding: 8px 0; }
+.ajouter-jour { color: var(--gris); font-size: 13.5px; padding: 10px 0 4px; }
+
+/* Semaine */
+.nav-semaine { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.titre-semaine { font: italic 20px "Instrument Serif", serif; color: var(--vert); }
+.jour { margin-top: 18px; padding: 12px 16px 6px; border-radius: 20px; background: var(--surface); border: 1px solid var(--ligne); }
+.jour.est-aujourdhui { border-color: rgba(163, 221, 187, 0.35); }
+.jour-tete { display: flex; align-items: baseline; gap: 8px; }
+.jour-tete .nom-jour { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris); }
+.jour-tete .num { font: 600 20px "Inter Display", sans-serif; }
+.est-aujourdhui .jour-tete .nom-jour { color: var(--vert); }
+
+/* Feuilles (fiche d'une tâche, réglages) */
+.voile { position: fixed; inset: 0; z-index: 20; background: rgba(5, 10, 8, 0.55); }
+.feuille {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 21; max-height: 92vh; max-height: 92dvh; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 14px; padding: 8px 18px calc(env(safe-area-inset-bottom) + 20px);
+  background: linear-gradient(170deg, var(--fond-haut), var(--fond)); border-top: 1px solid var(--ligne);
+  border-radius: 24px 24px 0 0; box-shadow: 0 -18px 50px rgba(0, 0, 0, 0.5); max-width: 640px; margin: 0 auto;
+}
+.feuille > * { flex-shrink: 0; }  /* la feuille défile ; ses champs gardent leur hauteur */
+.poignee-feuille { width: 40px; height: 5px; border-radius: 3px; background: var(--ligne); margin: 4px auto 0; flex: none; }
+.feuille-tete { display: flex; align-items: center; justify-content: space-between; }
+.champ-titre {
+  font: 600 21px/1.3 "Inter Display", sans-serif; color: var(--creme); background: transparent; border: 0;
+  border-bottom: 1px solid var(--ligne); padding: 2px 0 10px; resize: none; outline: none; width: 100%;
+}
+.champ { display: flex; flex-direction: column; gap: 6px; }
+.champ > span { font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris); }
+.champ textarea { height: auto; padding: 12px 14px; line-height: 1.5; resize: vertical; }
+.champ select option { background: #11231B; }
+.deux { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ligne { display: flex; align-items: center; gap: 12px; }
+.choix { display: flex; padding: 3px; border-radius: 999px; background: var(--surface); border: 1px solid var(--ligne); }
+.choix button { flex: 1; height: 40px; border-radius: 999px; font-size: 14px; color: var(--gris); }
+.choix button.actif { background: var(--creme); color: var(--fond); }
+.feuille-pied { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.groupe { display: flex; gap: 10px; }
+.groupe > * { flex: 1; }
+
+/* Messages */
+.toast {
+  position: fixed; left: 16px; right: 16px; bottom: calc(var(--barre) + env(safe-area-inset-bottom) + 14px); z-index: 30;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 16px; border-radius: 16px;
+  background: #1B3328; border: 1px solid rgba(163, 221, 187, 0.25); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+  max-width: 600px; margin: 0 auto; font-size: 14px;
+}
+.message { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 40px; text-align: center;
+  background: var(--fond); font: italic 22px/1.4 "Instrument Serif", serif; color: var(--gris); }

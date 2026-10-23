@@ -1,0 +1,16 @@
+{
+  "name": "Timer Easy Send",
+  "short_name": "Timer",
+  "description": "La tâche du moment de ta to-do Easy Desk, ta journée et ta semaine.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B130F",
+  "theme_color": "#0F1E17",
+  "icons": [
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

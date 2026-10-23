@@ -529,9 +529,7 @@ $('panneau').addEventListener('submit', e => {
 // Crée la tâche dans Easy Desk. Une tâche pour soi reste à soi (comme celles qu'il crée dans Easy Desk) ;
 // pour l'équipe ou pour quelqu'un d'autre, toute l'équipe la voit.
 async function creer(champs) {
-  const pourSoi = monId && moi && champs.assignee && sansAccent(champs.assignee) === sansAccent(moi);
-  // Un membre d'Easy Send n'a pas de tâches en commun : les siennes sont toujours à lui.
-  const ligne = { ...champs, owner: pourSoi || !estEquipe ? monId : null };
+  const ligne = { ...champs, owner: proprietaire(champs.assignee) };
   let cree;
   if (DEMO) {
     cree = { ...ligne, id: 'n' + Date.now(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
